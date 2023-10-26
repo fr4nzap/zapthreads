@@ -18,7 +18,8 @@ const ZapThreads = (props: { [key: string]: string; }) => {
   if (!['http', 'naddr', 'note', 'nevent'].some(e => props.anchor.startsWith(e))) {
     throw "Only NIP-19 naddr, note and nevent encoded entities and URLs are supported";
   }
-
+  console.log(props);
+  
   const anchor = () => props.anchor;
   const version = () => props.version;
   const relays = () => (props.relays || "wss://relay.damus.io,wss://nos.lol").split(",").map(r => new URL(r).toString());
@@ -228,7 +229,7 @@ const ZapThreads = (props: { [key: string]: string; }) => {
     <div id="ztr-root">
       <style>{style}</style>
       <ZapThreadsContext.Provider value={{ relays, anchor, anchorPubkey, profiles, signersStore, preferencesStore }}>
-        <RootComment />
+        <RootComment replyValue={props.replyValue} />
         <h2 id="ztr-title">
           {commentsLength() > 0 && `${commentsLength()} comment${commentsLength() == 1 ? '' : 's'}`}
         </h2>
@@ -259,6 +260,7 @@ customElement<ZapThreadsAttributes>('zap-threads', {
   npub: "",
   disable: "",
   'url-prefixes': "",
+  reply: ""
 }, (props) => {
   return <ZapThreads
     anchor={props.anchor ?? ''}
@@ -267,9 +269,10 @@ customElement<ZapThreadsAttributes>('zap-threads', {
     npub={props.npub ?? ''}
     disable={props.disable ?? ''}
     urlPrefixes={props['url-prefixes'] ?? ''}
+    replyValue={props.reply ?? ''}
   />;
 });
 
 export type ZapThreadsAttributes = {
-  [key in 'anchor' | 'version' | 'relays' | 'npub' | 'disable' | 'url-prefixes']?: string;
+  [key in 'anchor' | 'version' | 'relays' | 'npub' | 'disable' | 'url-prefixes' | 'reply']?: string;
 } & JSX.HTMLAttributes<HTMLElement>;
